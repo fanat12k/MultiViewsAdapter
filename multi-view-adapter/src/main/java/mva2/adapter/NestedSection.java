@@ -219,13 +219,12 @@ public class NestedSection extends Section implements Notifier {
   @Override
   void onItemSelectionToggled(int itemPosition, @NonNull Mode selectionMode) {
     Mode selectionModeToHonor = getModeToHonor(selectionMode, this.selectionMode);
+    clearAllSelections();
     for (Section section : sections) {
-      if (!section.isItemSelected(itemPosition)) {
-        section.onItemSelectionToggled(itemPosition, selectionModeToHonor);
-        itemPosition -= section.getCount();
-        if (itemPosition < 0 && selectionModeToHonor == MULTIPLE) {
-          break;
-        }
+      section.onItemSelectionToggled(itemPosition, selectionModeToHonor);
+      itemPosition -= section.getCount();
+      if (itemPosition < 0 && selectionModeToHonor == MULTIPLE) {
+        break;
       }
     }
   }

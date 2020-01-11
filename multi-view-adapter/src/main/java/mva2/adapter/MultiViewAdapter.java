@@ -491,7 +491,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<ItemViewHolder> {
   }
 
   void onItemSelectionToggled(int adapterPosition) {
-    nestedSection.onItemSelectionToggled(adapterPosition, SINGLE);
+    nestedSection.onItemSelectionToggled(adapterPosition, MULTIPLE);
   }
 
   void onStartDrag(ItemViewHolder itemViewHolder) {
