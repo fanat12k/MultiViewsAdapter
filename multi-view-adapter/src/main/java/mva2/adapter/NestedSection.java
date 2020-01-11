@@ -18,26 +18,27 @@ package mva2.adapter;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
-import android.view.View;
 import android.support.annotation.NonNull;
 import android.support.annotation.RestrictTo;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.LayoutManager;
-import java.util.ArrayList;
-import java.util.List;
+import android.view.View;
 import mva2.adapter.decorator.PositionType;
 import mva2.adapter.decorator.SectionPositionType;
 import mva2.adapter.internal.Notifier;
 import mva2.adapter.internal.RecyclerItem;
 import mva2.adapter.util.Mode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static mva2.adapter.util.Mode.MULTIPLE;
 
 /**
  * NestedSection is a section which can host multiple other section.
- *
+ * <p>
  * <p/>
- *
+ * <p>
  * When you need a group of section to have different behaviour than parent, then you can put those
  * section inside the NestedSection and set the desired behaviour to the NestedSection. For example,
  * if the parent has selectionMode as MULTIPLE and for a group of sections you want them to have
@@ -68,7 +69,8 @@ public class NestedSection extends Section implements Notifier {
   /// ------------------------------------------------------------------------------ ///
   //////////////////////////////////////////////////////////////////////////////////////
 
-  @RestrictTo(RestrictTo.Scope.LIBRARY) @Override
+  @RestrictTo(RestrictTo.Scope.LIBRARY)
+  @Override
   public final void onItemClicked(int itemPosition) {
     for (Section section : sections) {
       if (itemPosition >= section.getCount()) {
@@ -80,46 +82,53 @@ public class NestedSection extends Section implements Notifier {
     }
   }
 
-  @RestrictTo(RestrictTo.Scope.LIBRARY) @Override
+  @RestrictTo(RestrictTo.Scope.LIBRARY)
+  @Override
   public final void notifySectionItemMoved(Section section, int fromPosition, int toPosition) {
     onMoved(getAdapterPosition(section, fromPosition), getAdapterPosition(section, toPosition));
   }
 
-  @RestrictTo(RestrictTo.Scope.LIBRARY) @Override
+  @RestrictTo(RestrictTo.Scope.LIBRARY)
+  @Override
   public final void notifySectionRangeChanged(Section section, int positionStart, int itemCount,
-      Object payload) {
+                                              Object payload) {
     onChanged(getAdapterPosition(section, positionStart), itemCount, payload);
   }
 
-  @RestrictTo(RestrictTo.Scope.LIBRARY) @Override
+  @RestrictTo(RestrictTo.Scope.LIBRARY)
+  @Override
   public final void notifySectionRangeInserted(Section section, int positionStart, int itemCount) {
     onInserted(getAdapterPosition(section, positionStart), itemCount);
   }
 
-  @RestrictTo(RestrictTo.Scope.LIBRARY) @Override
+  @RestrictTo(RestrictTo.Scope.LIBRARY)
+  @Override
   public final void notifySectionRangeRemoved(Section section, int positionStart, int itemCount) {
     onRemoved(getAdapterPosition(section, positionStart), itemCount);
   }
 
-  @Override int getMaxSpanCount(int itemPosition, int spanCount) {
+  @Override
+  int getMaxSpanCount(int itemPosition, int spanCount) {
     for (Section section : sections) {
       if (itemPosition >= section.getCount()) {
         itemPosition -= section.getCount();
       } else {
         return section.getMaxSpanCount(itemPosition,
-            super.getMaxSpanCount(itemPosition, spanCount));
+                super.getMaxSpanCount(itemPosition, spanCount));
       }
     }
     return spanCount;
   }
 
-  @Override void collapseSection() {
+  @Override
+  void collapseSection() {
     for (Section section : sections) {
       section.collapseSection();
     }
   }
 
-  @Override boolean isSectionExpanded(int itemPosition) {
+  @Override
+  boolean isSectionExpanded(int itemPosition) {
     for (Section section : sections) {
       if (itemPosition >= section.getCount()) {
         itemPosition -= section.getCount();
@@ -130,10 +139,11 @@ public class NestedSection extends Section implements Notifier {
     return false;
   }
 
-  @Override SectionPositionType getSectionPositionType(int adapterPosition, int sectionPosition,
-      int size) {
+  @Override
+  SectionPositionType getSectionPositionType(int adapterPosition, int sectionPosition,
+                                             int size) {
     SectionPositionType parentSectionPositionType =
-        super.getSectionPositionType(adapterPosition, sectionPosition, size);
+            super.getSectionPositionType(adapterPosition, sectionPosition, size);
     if (parentSectionPositionType == SectionPositionType.MIDDLE) {
       return parentSectionPositionType;
     }
@@ -145,25 +155,29 @@ public class NestedSection extends Section implements Notifier {
     }
   }
 
-  @Override void drawDecoration(int itemPosition, @NonNull Canvas canvas,
-      @NonNull RecyclerView parent, @NonNull RecyclerView.State state, View child,
-      int adapterPosition) {
+  @Override
+  void drawDecoration(int itemPosition, @NonNull Canvas canvas,
+                      @NonNull RecyclerView parent, @NonNull RecyclerView.State state, View child,
+                      int adapterPosition) {
     super.drawDecoration(itemPosition, canvas, parent, state, child, adapterPosition);
     drawChildSectionDecoration(itemPosition, canvas, parent, state, child, adapterPosition);
   }
 
-  @Override void getDecorationOffsets(int itemPosition, @NonNull Rect outRect, @NonNull View view,
-      @NonNull RecyclerView parent, @NonNull RecyclerView.State state, int adapterPosition) {
+  @Override
+  void getDecorationOffsets(int itemPosition, @NonNull Rect outRect, @NonNull View view,
+                            @NonNull RecyclerView parent, @NonNull RecyclerView.State state, int adapterPosition) {
     super.getDecorationOffsets(itemPosition, outRect, view, parent, state, adapterPosition);
     getChildSectionOffsets(itemPosition, outRect, view, parent, state, adapterPosition);
   }
 
-  @Override void onDataSetChanged() {
+  @Override
+  void onDataSetChanged() {
     super.onDataSetChanged();
     count = -1;
   }
 
-  @Override Object getItem(int itemPosition) {
+  @Override
+  Object getItem(int itemPosition) {
     for (Section section : sections) {
       if (itemPosition >= section.getCount()) {
         itemPosition -= section.getCount();
@@ -174,7 +188,8 @@ public class NestedSection extends Section implements Notifier {
     throw new IllegalStateException();
   }
 
-  @Override int getCount() {
+  @Override
+  int getCount() {
     if (count == -1) {
       if (isSectionVisible()) {
         int itemCount = 0;
@@ -189,7 +204,8 @@ public class NestedSection extends Section implements Notifier {
     return count;
   }
 
-  @Override boolean isItemSelected(int itemPosition) {
+  @Override
+  boolean isItemSelected(int itemPosition) {
     for (Section section : sections) {
       if (itemPosition >= section.getCount()) {
         itemPosition -= section.getCount();
@@ -200,24 +216,29 @@ public class NestedSection extends Section implements Notifier {
     return false;
   }
 
-  @Override void onItemSelectionToggled(int itemPosition, @NonNull Mode selectionMode) {
+  @Override
+  void onItemSelectionToggled(int itemPosition, @NonNull Mode selectionMode) {
     Mode selectionModeToHonor = getModeToHonor(selectionMode, this.selectionMode);
     for (Section section : sections) {
-      section.onItemSelectionToggled(itemPosition, selectionModeToHonor);
-      itemPosition -= section.getCount();
-      if (itemPosition < 0 && selectionModeToHonor == MULTIPLE) {
-        break;
+      if (!section.isItemSelected(itemPosition)) {
+        section.onItemSelectionToggled(itemPosition, selectionModeToHonor);
+        itemPosition -= section.getCount();
+        if (itemPosition < 0 && selectionModeToHonor == MULTIPLE) {
+          break;
+        }
       }
     }
   }
 
-  @Override void clearAllSelections() {
+  @Override
+  void clearAllSelections() {
     for (Section section : sections) {
       section.clearAllSelections();
     }
   }
 
-  @Override boolean isItemExpanded(int itemPosition) {
+  @Override
+  boolean isItemExpanded(int itemPosition) {
     for (Section section : sections) {
       if (itemPosition >= section.getCount()) {
         itemPosition -= section.getCount();
@@ -228,8 +249,10 @@ public class NestedSection extends Section implements Notifier {
     return false;
   }
 
-  @Override void onItemExpansionToggled(int itemPosition, @NonNull Mode expansionMode) {
+  @Override
+  void onItemExpansionToggled(int itemPosition, @NonNull Mode expansionMode) {
     Mode expansionModeToHonor = getModeToHonor(expansionMode, this.expansionMode);
+
     for (Section section : sections) {
       section.onItemExpansionToggled(itemPosition, expansionModeToHonor);
       itemPosition -= section.getCount();
@@ -239,13 +262,15 @@ public class NestedSection extends Section implements Notifier {
     }
   }
 
-  @Override void collapseAllItems() {
+  @Override
+  void collapseAllItems() {
     for (Section section : sections) {
       section.collapseAllItems();
     }
   }
 
-  @Override int onSectionExpansionToggled(int itemPosition, @NonNull Mode sectionExpansionMode) {
+  @Override
+  int onSectionExpansionToggled(int itemPosition, @NonNull Mode sectionExpansionMode) {
     Mode mode = getModeToHonor(sectionExpansionMode, this.sectionExpansionMode);
     if (itemPosition < getCount() && itemPosition >= 0) {
       onChildSectionExpansionToggled(itemPosition, mode);
@@ -253,8 +278,9 @@ public class NestedSection extends Section implements Notifier {
     return itemPosition - getCount();
   }
 
-  @Override int getPositionType(int itemPosition, int adapterPosition,
-      LayoutManager layoutManager) {
+  @Override
+  int getPositionType(int itemPosition, int adapterPosition,
+                      LayoutManager layoutManager) {
     for (Section section : sections) {
       if (itemPosition >= section.getCount()) {
         itemPosition -= section.getCount();
@@ -265,7 +291,8 @@ public class NestedSection extends Section implements Notifier {
     return PositionType.MIDDLE;
   }
 
-  @Override void onItemDismiss(int itemPosition) {
+  @Override
+  void onItemDismiss(int itemPosition) {
     for (Section section : sections) {
       if (itemPosition >= section.getCount()) {
         itemPosition -= section.getCount();
@@ -276,7 +303,8 @@ public class NestedSection extends Section implements Notifier {
     }
   }
 
-  @Override boolean move(int initialPosition, int targetOffset) {
+  @Override
+  boolean move(int initialPosition, int targetOffset) {
     int currentPosition = initialPosition;
     int targetPosition = initialPosition + targetOffset;
 
@@ -285,7 +313,7 @@ public class NestedSection extends Section implements Notifier {
         currentPosition -= section.getCount();
       } else {
         if (currentPosition + targetOffset <= section.getCount()
-            && currentPosition + targetOffset > 0) {
+                && currentPosition + targetOffset > 0) {
           return section.move(currentPosition, targetOffset);
         }
         break;
@@ -323,7 +351,8 @@ public class NestedSection extends Section implements Notifier {
     return false;
   }
 
-  @Override RecyclerItem startMovingItem(int itemPosition) {
+  @Override
+  RecyclerItem startMovingItem(int itemPosition) {
     for (Section section : sections) {
       if (itemPosition >= section.getCount()) {
         itemPosition -= section.getCount();
@@ -335,7 +364,8 @@ public class NestedSection extends Section implements Notifier {
     throw new IllegalStateException();
   }
 
-  @Override void finishMovingItem(int currentPosition, RecyclerItem itemToMove) {
+  @Override
+  void finishMovingItem(int currentPosition, RecyclerItem itemToMove) {
     for (Section section : sections) {
       if (currentPosition >= section.getCount()) {
         currentPosition -= section.getCount();
@@ -383,8 +413,8 @@ public class NestedSection extends Section implements Notifier {
   }
 
   void drawChildSectionDecoration(int itemPosition, @NonNull Canvas canvas,
-      @NonNull RecyclerView parent, @NonNull RecyclerView.State state, View child,
-      int adapterPosition) {
+                                  @NonNull RecyclerView parent, @NonNull RecyclerView.State state, View child,
+                                  int adapterPosition) {
     for (Section section : sections) {
       if (itemPosition >= section.getCount()) {
         itemPosition -= section.getCount();
@@ -396,7 +426,7 @@ public class NestedSection extends Section implements Notifier {
   }
 
   void getChildSectionOffsets(int itemPosition, @NonNull Rect outRect, @NonNull View view,
-      @NonNull RecyclerView parent, @NonNull RecyclerView.State state, int adapterPosition) {
+                              @NonNull RecyclerView parent, @NonNull RecyclerView.State state, int adapterPosition) {
     for (Section section : sections) {
       if (itemPosition >= section.getCount()) {
         itemPosition -= section.getCount();
