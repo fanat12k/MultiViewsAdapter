@@ -40,8 +40,7 @@ import mva2.adapter.internal.SparseIntArrayCache;
 import mva2.adapter.util.InfiniteLoadingHelper;
 import mva2.adapter.util.Mode;
 
-import static mva2.adapter.util.Mode.INHERIT;
-import static mva2.adapter.util.Mode.MULTIPLE;
+import static mva2.adapter.util.Mode.*;
 
 /**
  * MultiViewAdapter lets you write complex RecyclerView adapters easily.
@@ -485,7 +484,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<ItemViewHolder> {
   }
 
   void onSectionExpansionToggled(int adapterPosition) {
-    nestedSection.onSectionExpansionToggled(adapterPosition, MULTIPLE);
+    nestedSection.onSectionExpansionToggled(adapterPosition, SINGLE);
   }
 
   void onItemExpansionToggled(int adapterPosition) {
